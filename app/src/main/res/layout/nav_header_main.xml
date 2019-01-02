@@ -13,6 +13,7 @@
         android:layout_height="100dp"
         android:layout_gravity="center_vertical"
         android:layout_margin="10dp"
+        android:visibility="invisible"
         app:srcCompat="@android:color/background_light" />
 
     <LinearLayout
