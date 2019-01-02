@@ -1,0 +1,52 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
+    defaultConfig {
+        applicationId "com.example.administrator.yilan000"
+        minSdkVersion 17
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support:design:28.0.0'
+    testCompile 'junit:junit:4.12'
+    //依赖注解
+    //依赖添加
+    implementation 'com.jakewharton:butterknife:8.4.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
+    implementation 'com.google.code.gson:gson:2.8.2'
+    //高级的recyclerview
+    implementation 'com.jude:easyrecyclerview:4.4.0'
+    implementation 'com.android.support:recyclerview-v7:28.0.0'
+    //rxjava
+    implementation 'com.squareup.retrofit2:retrofit-converters:2.1.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.1.0'
+    implementation 'io.reactivex:rxandroid:1.2.1'
+    implementation 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.1.0'
+    implementation 'com.squareup.retrofit2:converter-scalars:2.1.0'
+    implementation 'com.github.bumptech.glide:glide:3.7.0'
+
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.2.0'
+
+    //jsoup网页解析
+    implementation 'org.jsoup:jsoup:1.8.3'
+    implementation 'org.sufficientlysecure:html-textview:1.3'
+}
