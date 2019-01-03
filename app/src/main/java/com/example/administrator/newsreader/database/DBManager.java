@@ -9,6 +9,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.administrator.newsreader.bean.NewsGson;
+import com.example.administrator.newsreader.ui.news.contrant.NewsContract;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,26 +23,35 @@ public class DBManager implements databaseSettings {
         this.database = helper.getWritableDatabase();
     }
 
-    public void insert(List<NewsGson.NewslistBean> allData, int table_index, Context context) {
+    public void insert(List<NewsGson.NewslistBean> allData, int table_index, Context context, NewsContract.Callback readyToReload) {
         database.beginTransaction();
         try{
             for (NewsGson.NewslistBean data : allData) {
-                ContentValues contentValues = new ContentValues();
-                contentValues.put("hash", data.getUrl().hashCode());
-                contentValues.put("title", data.getTitle());
-                contentValues.put("time", data.getCtime());
-                contentValues.put("url", data.getUrl());
-                contentValues.put("picUrl", data.getPicUrl());
-                database.insert(TABLE_NAMES[table_index], null, contentValues);
-                database.setTransactionSuccessful();
+                try {
+                    ContentValues contentValues = new ContentValues();
+                    contentValues.put("hash", data.getUrl().hashCode());
+                    contentValues.put("title", data.getTitle());
+                    contentValues.put("time", data.getCtime());
+                    contentValues.put("url", data.getUrl());
+                    contentValues.put("picUrl", data.getPicUrl());
+                    database.insertWithOnConflict(TABLE_NAMES[table_index], null, contentValues, SQLiteDatabase.CONFLICT_FAIL);
+                    database.setTransactionSuccessful();
+                } catch (SQLiteConstraintException e) {
+                    if (readyToReload == null)
+                        Toast.makeText(context, "已在收藏栏中", Toast.LENGTH_SHORT).show();
+                } catch (Exception e) {
+                    if (readyToReload == null) {
+                        Toast.makeText(context, "收藏失败，数据异常", Toast.LENGTH_SHORT).show();
+                        Log.d("DBManager :", "收藏失败 : " + e.getMessage());
+                    }
+                }
             }
-        } catch (SQLiteConstraintException e) {
-            Toast.makeText(context, "已收藏！", Toast.LENGTH_SHORT).show();
-        } catch (Exception e) {
-            Toast.makeText(context, "收藏失败，数据插入出现问题", Toast.LENGTH_SHORT).show();
-            Log.d("DBManager :", "收藏失败 : " + e.getMessage());
+
         } finally {
             database.endTransaction();
+            if (readyToReload != null) {
+                readyToReload.reloadFromDB();
+            }
         }
     }
 

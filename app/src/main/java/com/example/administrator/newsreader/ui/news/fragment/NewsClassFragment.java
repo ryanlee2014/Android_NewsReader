@@ -38,7 +38,7 @@ import butterknife.ButterKnife;
  * Created by Administrator on 2016/10/24.
  */
 
-public class NewsClassFragment extends BaseFragent implements NewsContract.View{
+public class NewsClassFragment extends BaseFragent implements NewsContract.View, NewsContract.Callback{
     private NewsAdapter adapter;
     private NewsContract.Presenter mPresenter;
 
@@ -157,7 +157,7 @@ public class NewsClassFragment extends BaseFragent implements NewsContract.View{
 
                         switch (menuItem.getItemId()) {
                             case R.id.cm_collect:
-                                dbManager.insert(insert, databaseSettings.TI_collection, getContext());
+                                dbManager.insert(insert, databaseSettings.TI_collection, getContext(), null);
                                 break;
                                 default:
                                     Toast.makeText(getContext(), "你点到了奇怪的地方O_o", Toast.LENGTH_SHORT).show();
@@ -181,16 +181,22 @@ public class NewsClassFragment extends BaseFragent implements NewsContract.View{
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        reloadFromDB();
     }
 
 
     @Override
     public void returnData(List<NewsGson.NewslistBean> datas) {
-
-
-        adapter.addAll(datas);
+        reloadFromDB();
+        dbManager.insert(datas, type, getContext(), this);
 
         Log.e("adapter",adapter.getAllData().size()+"");
+    }
+
+    @Override
+    public void reloadFromDB() {
+        adapter.clear();
+        adapter.addAll(dbManager.getAllFromTable(type, getContext()));
     }
 
     @Override
