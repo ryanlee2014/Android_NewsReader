@@ -5,13 +5,19 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.administrator.newsreader.R;
 import com.example.administrator.newsreader.bean.NewsGson;
+import com.example.administrator.newsreader.database.DBManager;
+import com.example.administrator.newsreader.database.databaseSettings;
 import com.example.administrator.newsreader.ui.base.BaseFragent;
 import com.example.administrator.newsreader.ui.news.NewsDetailsActivity;
 import com.example.administrator.newsreader.ui.news.adapter.NewsAdapter;
@@ -29,22 +35,22 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
-public class NewsClassFavoriteFragment extends BaseFragent implements NewsContract.View {
+public class NewsClassFavoriteFragment extends BaseFragent implements databaseSettings {
     private NewsAdapter adapter;
-    private NewsContract.Presenter mPresenter;
 
     private boolean isViewPrepared; // 标识fragment视图已经初始化完毕
     private boolean hasFetchData; // 标识已经触发过懒加载数据
+    private LinearLayoutManager layoutManager;
     private int type;
+
+    private DBManager dbManager;
 
 
     public NewsClassFavoriteFragment() {
         // Required empty public constructor
     }
 
-    // TODO: Rename and change types and number of parameters
     public static NewsClassFavoriteFragment newInstance() {
-        Bundle bundle = new Bundle();
         NewsClassFavoriteFragment fragment = new NewsClassFavoriteFragment();
         return fragment;
     }
@@ -52,10 +58,11 @@ public class NewsClassFavoriteFragment extends BaseFragent implements NewsContra
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        type = TI_collection;
+        dbManager = new DBManager(getContext());
     }
     @BindView(R.id.recyclerView)
     EasyRecyclerView recyclerView;
-    private int pageIndex = 1;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -65,10 +72,8 @@ public class NewsClassFavoriteFragment extends BaseFragent implements NewsContra
         ButterKnife.bind(this, view);
 
 
-        mPresenter=new NewsPresenter(this,getContext());
-
         recyclerView.setAdapter(adapter = new NewsAdapter(getActivity()));
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setLayoutManager(layoutManager = new LinearLayoutManager(getActivity()));
 
         //添加边框
         SpaceDecoration itemDecoration = new SpaceDecoration((int) PixUtil.convertDpToPixel(8, getContext()));
@@ -85,8 +90,7 @@ public class NewsClassFavoriteFragment extends BaseFragent implements NewsContra
                     @Override
                     public void run() {
                         adapter.clear();
-                        //TODO:从数据库加载数据
-                        //mPresenter.loadData(type,pageIndex);
+                        adapter.addAll(dbManager.getAllFromTable(type, getContext()));
                     }
                 }, 1000);
             }
@@ -108,6 +112,32 @@ public class NewsClassFavoriteFragment extends BaseFragent implements NewsContra
             }
         });
 
+        adapter.setOnItemLongClickListener(new RecyclerArrayAdapter.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(final int position) {
+                View view = layoutManager.findViewByPosition(position);
+                PopupMenu popupMenu = new PopupMenu(getContext(), layoutManager.findViewByPosition(position));
+                MenuInflater menuInflater = popupMenu.getMenuInflater();
+                menuInflater.inflate(R.menu.delete_collect_menu, popupMenu.getMenu());
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+                        int hash = adapter.getAllData().get(position).getUrl().hashCode();
+                        switch (menuItem.getItemId()) {
+                            case R.id.dcm_remove:
+                                dbManager.delete(hash, getContext());
+                                adapter.remove(position);
+                                break;
+                            default:
+                                Toast.makeText(getContext(), "你点到了奇怪的地方O_o", Toast.LENGTH_SHORT).show();
+                        }
+                        return false;
+                    }
+                });
+                popupMenu.show();
+                return true;
+            }
+        });
 
         isViewPrepared = true;
 
@@ -118,14 +148,6 @@ public class NewsClassFavoriteFragment extends BaseFragent implements NewsContra
         super.onViewCreated(view, savedInstanceState);
     }
 
-    @Override
-    public void returnData(List<NewsGson.NewslistBean> datas) {
-
-
-        adapter.addAll(datas);
-
-        Log.e("adapter",adapter.getAllData().size()+"");
-    }
     @Override
     public void onResume() {
         super.onResume();
@@ -166,18 +188,13 @@ public class NewsClassFavoriteFragment extends BaseFragent implements NewsContra
     }
 
     protected void lazyFetchData() {
-        //TODO:从数据库加载数据
         //mPresenter.loadData(type,pageIndex);
+        loadFromDB();
     }
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
+
+    public void loadFromDB() {
+        adapter.clear();
+        adapter.addAll(dbManager.getAllFromTable(type, getContext()));
+    }
 
 }

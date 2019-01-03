@@ -46,7 +46,9 @@ public class DBManager implements databaseSettings {
                     }
                 }
             }
-
+            if (allData.size() == 1 && readyToReload == null) {
+                Toast.makeText(context, "收藏成功", Toast.LENGTH_SHORT).show();
+            }
         } finally {
             database.endTransaction();
             if (readyToReload != null) {
@@ -71,9 +73,9 @@ public class DBManager implements databaseSettings {
         return result;
     }
 
-    public void delete(String url, Context context) {
+    public void delete(int hash, Context context) {
         int table_index = TI_collection;
-        database.execSQL("DELETE FROM " + TABLE_NAMES[table_index] + " WHERE url = '" + url + "'");
+        database.execSQL("DELETE FROM " + TABLE_NAMES[table_index] + " WHERE hash='" + String.valueOf(hash) + "'");
         Toast.makeText(context, "删除成功", Toast.LENGTH_SHORT).show();
     }
 
