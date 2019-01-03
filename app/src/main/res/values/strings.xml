@@ -36,4 +36,6 @@
     <string name="fragment_meinv_3">国际新闻</string>
     <string name="fragment_meinv_4">娱乐新闻</string>
 
+    <string name="cm_collect_str">加入收藏</string>
+
 </resources>

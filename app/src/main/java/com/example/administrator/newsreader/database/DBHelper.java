@@ -15,9 +15,10 @@ public class DBHelper extends SQLiteOpenHelper implements databaseSettings {
     public void onCreate(SQLiteDatabase database) {
         for (String table_name : TABLE_NAMES) {
             database.execSQL("CREATE TABLE IF NOT EXISTS " + table_name + " (" +
+                    "hash integer PRIMARY KEY, " +
                     "title varchar, " +
                     "time varchar, " +
-                    "url varchar primary key, " +
+                    "url varchar, " +
                     "picUrl varchar)");
         }
     }

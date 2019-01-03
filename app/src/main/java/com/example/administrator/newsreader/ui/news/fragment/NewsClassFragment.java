@@ -5,13 +5,19 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.administrator.newsreader.R;
 import com.example.administrator.newsreader.bean.NewsGson;
+import com.example.administrator.newsreader.database.DBManager;
+import com.example.administrator.newsreader.database.databaseSettings;
 import com.example.administrator.newsreader.ui.base.BaseFragent;
 import com.example.administrator.newsreader.ui.news.NewsDetailsActivity;
 import com.example.administrator.newsreader.ui.news.adapter.NewsAdapter;
@@ -38,7 +44,10 @@ public class NewsClassFragment extends BaseFragent implements NewsContract.View{
 
     private boolean isViewPrepared; // 标识fragment视图已经初始化完毕
     private boolean hasFetchData; // 标识已经触发过懒加载数据
+    private LinearLayoutManager layoutManager;
     private int type;
+
+    private DBManager dbManager;
 
 
     public static NewsClassFragment newInstance(int type) {
@@ -60,11 +69,12 @@ public class NewsClassFragment extends BaseFragent implements NewsContract.View{
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         type = getArguments().getInt("type");
+        dbManager = new DBManager(getContext());
 
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_news_type, container, false);
         ButterKnife.bind(this, view);
 
@@ -72,7 +82,7 @@ public class NewsClassFragment extends BaseFragent implements NewsContract.View{
         mPresenter=new NewsPresenter(this,getContext());
 
         recyclerView.setAdapter(adapter = new NewsAdapter(getActivity()));
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerView.setLayoutManager(layoutManager = new LinearLayoutManager(getActivity()));
 
         //添加边框
         SpaceDecoration itemDecoration = new SpaceDecoration((int) PixUtil.convertDpToPixel(8, getContext()));
@@ -123,6 +133,40 @@ public class NewsClassFragment extends BaseFragent implements NewsContract.View{
                 bundle.putStringArrayList("data", data);
                 intent.putExtras(bundle);
                 startActivity(intent);
+            }
+        });
+
+        adapter.setOnItemLongClickListener(new RecyclerArrayAdapter.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(final int position) {
+                View view = layoutManager.findViewByPosition(position);
+                PopupMenu popupMenu = new PopupMenu(getContext(), layoutManager.findViewByPosition(position));
+                MenuInflater menuInflater = popupMenu.getMenuInflater();
+                menuInflater.inflate(R.menu.collect_menu, popupMenu.getMenu());
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+                        NewsGson.NewslistBean data = adapter.getAllData().get(position);
+                        List<NewsGson.NewslistBean> insert = new ArrayList<>();
+                        insert.add(new NewsGson.NewslistBean(
+                                data.getTitle(),
+                                data.getCtime(),
+                                data.getUrl(),
+                                data.getPicUrl()
+                        ));
+
+                        switch (menuItem.getItemId()) {
+                            case R.id.cm_collect:
+                                dbManager.insert(insert, databaseSettings.TI_collection, getContext());
+                                break;
+                                default:
+                                    Toast.makeText(getContext(), "你点到了奇怪的地方O_o", Toast.LENGTH_SHORT).show();
+                        }
+                        return false;
+                    }
+                });
+                popupMenu.show();
+                return true;
             }
         });
 
@@ -186,6 +230,7 @@ public class NewsClassFragment extends BaseFragent implements NewsContract.View{
         super.onDestroy();
         hasFetchData = false;
         isViewPrepared = false;
+        dbManager.closeDB();
     }
 
     protected void lazyFetchData() {

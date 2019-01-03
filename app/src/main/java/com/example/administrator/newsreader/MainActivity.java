@@ -16,6 +16,8 @@ import com.example.administrator.newsreader.ui.base.TabPagerAdapter;
 import com.example.administrator.newsreader.ui.news.NewsFragment;
 import com.example.administrator.newsreader.widget.NoScrollViewPage;
 
+import butterknife.BindView;
+
 import static com.example.administrator.newsreader.R.id.viewPager;
 
 public class MainActivity extends BaseActivity
@@ -33,24 +35,20 @@ public class MainActivity extends BaseActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        mViewPager = findViewById(viewPager);
         setSupportActionBar(toolbar);
         mTitles = getResources().getStringArray(R.array.main_titles);
-
-        mViewPager = (NoScrollViewPage) findViewById(viewPager);
-
 
         fragments = new Fragment[2];
 
 
-            fragments[0] =  NewsFragment.newInstance();
+            fragments[0] = NewsFragment.newInstance();
             fragments[1] = NewsFragment.newInstance();
 
         mAdapter = new TabPagerAdapter(getSupportFragmentManager(), fragments);
         //mAdapter.setTabTitles(mTitles);
         mViewPager.setAdapter(mAdapter);
         //设置显示模式 滚动
-
-
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -106,10 +104,7 @@ public class MainActivity extends BaseActivity
             // Handle the camera action
             mViewPager.setCurrentItem(0);
 
-        }else if (id == R.id.nav_share) {
-            Toast.makeText(getApplicationContext(),
-                    "还在开发中O_O", Toast.LENGTH_LONG).show();
-        } else if (id == R.id.nav_send) {
+        }else if (id == R.id.nav_send) {
             Toast.makeText(getApplicationContext(),
                     "还在开发中O_O", Toast.LENGTH_LONG).show();
         }

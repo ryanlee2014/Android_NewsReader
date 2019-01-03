@@ -3,7 +3,9 @@ package com.example.administrator.newsreader.database;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.example.administrator.newsreader.bean.NewsGson;
@@ -25,14 +27,19 @@ public class DBManager implements databaseSettings {
         try{
             for (NewsGson.NewslistBean data : allData) {
                 ContentValues contentValues = new ContentValues();
+                contentValues.put("hash", data.getUrl().hashCode());
                 contentValues.put("title", data.getTitle());
                 contentValues.put("time", data.getCtime());
                 contentValues.put("url", data.getUrl());
                 contentValues.put("picUrl", data.getPicUrl());
                 database.insert(TABLE_NAMES[table_index], null, contentValues);
+                database.setTransactionSuccessful();
             }
+        } catch (SQLiteConstraintException e) {
+            Toast.makeText(context, "已收藏！", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             Toast.makeText(context, "收藏失败，数据插入出现问题", Toast.LENGTH_SHORT).show();
+            Log.d("DBManager :", "收藏失败 : " + e.getMessage());
         } finally {
             database.endTransaction();
         }
@@ -40,7 +47,7 @@ public class DBManager implements databaseSettings {
 
     public List<NewsGson.NewslistBean> getAllFromTable(int table_index, Context context) {
         List<NewsGson.NewslistBean> result = new ArrayList<>();
-        Cursor cursor = database.rawQuery("SELECT title,time,url,picUrl FROM "
+        Cursor cursor = database.rawQuery("SELECT ALL title,time,url,picUrl FROM "
                                           + TABLE_NAMES[table_index], null);
         for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
             result.add(new NewsGson.NewslistBean(
@@ -59,4 +66,9 @@ public class DBManager implements databaseSettings {
         database.execSQL("DELETE FROM " + TABLE_NAMES[table_index] + " WHERE url = '" + url + "'");
         Toast.makeText(context, "删除成功", Toast.LENGTH_SHORT).show();
     }
+
+    public void closeDB() {
+        database.close();
+    }
+
 }
