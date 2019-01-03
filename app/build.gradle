@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.jakewharton.butterknife'
 
 android {
     compileSdkVersion 28
@@ -22,6 +21,7 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
@@ -50,7 +50,4 @@ dependencies {
     //jsoup网页解析
     implementation 'org.jsoup:jsoup:1.8.3'
     implementation 'org.sufficientlysecure:html-textview:1.3'
-
-    implementation 'com.jakewharton:butterknife:9.0.0-rc3'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:9.0.0-rc3'
 }

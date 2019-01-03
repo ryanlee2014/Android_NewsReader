@@ -1,5 +1,6 @@
 package com.example.administrator.newsreader;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -106,12 +107,9 @@ public class MainActivity extends BaseActivity
             // Handle the camera action
             mViewPager.setCurrentItem(0);
 
-        }else if (id == R.id.nav_share) {
-            Toast.makeText(getApplicationContext(),
-                    "还在开发中O_O", Toast.LENGTH_LONG).show();
-        } else if (id == R.id.nav_send) {
-            Toast.makeText(getApplicationContext(),
-                    "还在开发中O_O", Toast.LENGTH_LONG).show();
+        }else if (id == R.id.nav_send) {
+            Intent it = new Intent(MainActivity.this, AboutActivity.class);
+            startActivity(it);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
