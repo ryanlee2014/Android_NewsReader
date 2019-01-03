@@ -28,4 +28,8 @@ public interface NewsContract {
     interface Model {
         void loadData( int type, OnLoadFirstDataListener listener,int page);
     }
+
+    interface Callback{
+        void reloadFromDB();
+    }
 }
