@@ -67,6 +67,16 @@ public class NewsGson {
             return new com.google.gson.Gson().fromJson(str, NewslistBean.class);
         }
 
+        public NewslistBean() {}
+
+        /* 数据库操作模块使用 */
+        public NewslistBean(String title, String time, String url, String picUrl) {
+            this.title = title;
+            this.ctime = time;
+            this.url = url;
+            this.picUrl = picUrl;
+        }
+
         public String getCtime() {
             return ctime;
         }
