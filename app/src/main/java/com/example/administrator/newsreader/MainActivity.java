@@ -8,10 +8,12 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.example.administrator.newsreader.ui.NewsFavoriteFragment;
 import com.example.administrator.newsreader.ui.base.BaseActivity;
 import com.example.administrator.newsreader.ui.base.TabPagerAdapter;
 import com.example.administrator.newsreader.ui.news.NewsFragment;
@@ -44,7 +46,7 @@ public class MainActivity extends BaseActivity
 
 
             fragments[0] =  NewsFragment.newInstance();
-            fragments[1] = NewsFragment.newInstance();
+            fragments[1] = NewsFavoriteFragment.newInstance();
 
         mAdapter = new TabPagerAdapter(getSupportFragmentManager(), fragments);
         //mAdapter.setTabTitles(mTitles);
@@ -105,8 +107,12 @@ public class MainActivity extends BaseActivity
 
         if (id == R.id.nav_camera) {
             // Handle the camera action
-            mViewPager.setCurrentItem(0);
+            Log.d("Item", "d");
+            mViewPager.setCurrentItem(1);
 
+        }else if(id == R.id.news) {
+            Log.d("Item", "e");
+            mViewPager.setCurrentItem(0);
         }else if (id == R.id.nav_send) {
             Intent it = new Intent(MainActivity.this, AboutActivity.class);
             startActivity(it);

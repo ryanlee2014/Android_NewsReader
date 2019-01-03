@@ -36,4 +36,7 @@
     <string name="fragment_meinv_3">国际新闻</string>
     <string name="fragment_meinv_4">娱乐新闻</string>
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>
