@@ -102,6 +102,9 @@ public class NewsFavoriteFragment  extends BaseFragent implements ViewPager.OnPa
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
+        if(mFragments != null && mFragments.length != 0) {
+            mFragments[0].loadFromDB();
+        }
     }
 
     @Override

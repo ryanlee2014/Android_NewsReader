@@ -17,6 +17,8 @@ public class AboutActivity extends AppCompatActivity {
     TextView program_name;
     @BindView(R.id.statement)
     TextView statement;
+    @BindView(R.id.author_name)
+    TextView author;
     @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,5 +30,6 @@ public class AboutActivity extends AppCompatActivity {
                 .into(imageView);
         program_name.setText("Android Reader");
         statement.setText("A JSON-base NewsReader using TIANAPI");
+        author.setText("Designer: 廖鹏城 李昊元");
     }
 }

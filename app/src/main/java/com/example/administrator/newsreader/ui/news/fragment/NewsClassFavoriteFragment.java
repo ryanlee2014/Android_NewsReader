@@ -92,7 +92,7 @@ public class NewsClassFavoriteFragment extends BaseFragent implements databaseSe
                         adapter.clear();
                         adapter.addAll(dbManager.getAllFromTable(type, getContext()));
                     }
-                }, 1000);
+                }, 100);
             }
         });
 
@@ -151,6 +151,7 @@ public class NewsClassFavoriteFragment extends BaseFragent implements databaseSe
     @Override
     public void onResume() {
         super.onResume();
+        Log.d("FavoriteFragment", "Resume");
     }
 
     private void lazyFetchDataIfPrepared() {
@@ -179,6 +180,8 @@ public class NewsClassFavoriteFragment extends BaseFragent implements databaseSe
         super.onActivityCreated(savedInstanceState);
         lazyFetchDataIfPrepared();
     }
+
+
 
     @Override
     public void onDestroy() {
