@@ -30,7 +30,11 @@ public class NewsModel implements NewsContract.Model{
                             List<NewsGson.NewslistBean> newsList = new ArrayList<NewsGson.NewslistBean>();
                             for (NewsGson.NewslistBean newslistBean : newsgson.getNewslist()) {
                                 NewsGson.NewslistBean new1 = new NewsGson.NewslistBean();
-                                new1.setTitle(newslistBean.getTitle());
+                                String title = newslistBean.getTitle();
+                                if(title.length() > 28) {
+                                    title = title.substring(0, 25).concat("...");
+                                }
+                                new1.setTitle(title);
                                 new1.setCtime(newslistBean.getCtime());
                                 new1.setDescription(newslistBean.getDescription());
                                 new1.setPicUrl(newslistBean.getPicUrl().replace("_ss",""));

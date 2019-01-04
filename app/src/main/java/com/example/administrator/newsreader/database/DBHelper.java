@@ -17,7 +17,7 @@ public class DBHelper extends SQLiteOpenHelper implements databaseSettings {
             database.execSQL("CREATE TABLE IF NOT EXISTS " + table_name + " (" +
                     "hash integer PRIMARY KEY, " +
                     "title varchar, " +
-                    "time varchar, " +
+                    "time datetime, " +
                     "url varchar, " +
                     "picUrl varchar)");
         }

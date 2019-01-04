@@ -60,7 +60,7 @@ public class DBManager implements databaseSettings {
     public List<NewsGson.NewslistBean> getAllFromTable(int table_index, Context context) {
         List<NewsGson.NewslistBean> result = new ArrayList<>();
         Cursor cursor = database.rawQuery("SELECT ALL title,time,url,picUrl FROM "
-                                          + TABLE_NAMES[table_index], null);
+                                          + TABLE_NAMES[table_index] + " ORDER BY time DESC", null);
         for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
             result.add(new NewsGson.NewslistBean(
                     cursor.getString(0),
